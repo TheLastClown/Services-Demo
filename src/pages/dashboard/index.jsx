@@ -1,15 +1,30 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { PureComponent } from "react";
 
-class App extends Component {
+// components
+import logo from "../../assets/logo.svg";
+
+// styles
+import "./styles/login.css";
+
+// // type
+// type StateType = {};
+// type PropsType = {};
+
+class App extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
-            Edit <code>src/App.js</code> and save to reload.
+            Edit
+            <code>src/App.js</code>
+            and save to reload.
           </p>
           <a
             className="App-link"
