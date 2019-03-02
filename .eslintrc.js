@@ -21,7 +21,9 @@ module.exports = {
     }],
     "import/no-named-as-default": 0,
     "import/no-named-as-default-member": 0,
-    "no-unused-state": 0
+    "no-unused-state": 0,
+    "react/jsx-wrap-multilines": false,
+    "no-unused-vars": 0
   },
   "parserOptions": {
     "ecmaFeatures": {
