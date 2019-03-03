@@ -33,6 +33,16 @@ type PropsType = {
 class Login extends PureComponent<PropsType, StateType> {
   state = { ...INITIAL_STATE };
 
+  componentDidMount() {
+    const { firebase, history } = this.props;
+
+    firebase.getCurrentUser(user => {
+      if (user) {
+        history.push(ROUTES.DASHBOARD);
+      }
+    });
+  }
+
   onSubmit = (event: Object) => {
     event.preventDefault();
     const self = this;

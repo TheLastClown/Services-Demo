@@ -19,11 +19,12 @@ const styles = theme => ({
 type PropsType = {
   classes: Object,
   onClick: Function,
+  color: string,
 };
 
-const SignOutButton = ({ classes, onClick }: PropsType) => (
+const SignOutButton = ({ classes, onClick, color }: PropsType) => (
   <Button
-    variant="extended"
+    color={color}
     aria-label="Delete"
     className={classes.fab}
     onClick={onClick}

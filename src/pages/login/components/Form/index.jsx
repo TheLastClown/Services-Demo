@@ -1,15 +1,19 @@
 // @flow
 import React from "react";
+
+// components
+import Lottie from "lottie-react-web";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
+
+const ANIMATION = require("../../../../assets/animations/location.json");
 
 const styles = theme => ({
   main: {
@@ -32,7 +36,9 @@ const styles = theme => ({
   },
   avatar: {
     margin: theme.spacing.unit,
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: "white",
+    width: 100,
+    height: 100,
   },
   form: {
     width: "100%",
@@ -56,10 +62,14 @@ const Form = ({ classes, onSubmit, onChange, email, password }: PropsType) => (
     <CssBaseline />
     <Paper className={classes.paper}>
       <Avatar className={classes.avatar}>
-        <LockOutlinedIcon />
+        <Lottie
+          options={{
+            animationData: ANIMATION,
+          }}
+        />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Welcome again
+        Welcome again!
       </Typography>
       <form className={classes.form} onSubmit={onSubmit}>
         <FormControl margin="normal" required fullWidth>
