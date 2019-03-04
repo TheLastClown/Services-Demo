@@ -1,16 +1,19 @@
 // @flow
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
+import { connect } from "react-redux";
 
 // components
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
 import withStyles from "@material-ui/core/styles/withStyles";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import TextInput from "./components/TextInput";
+
+// actions
+import { setUser } from "../../actions/actionsUser";
+import { resetStore } from "../../actions/actionsService";
 
 // styles
 import styles from "./styles/formView";
@@ -18,9 +21,18 @@ import styles from "./styles/formView";
 // type
 type PropsType = {
   classes: Object,
+  showError: Function,
+  time: string,
+  distance: string,
+  user: Object,
+  setUserAction: Function,
+  firebase: Object,
+  service: Object,
+  resetStoreAction: Function,
 };
 
 type StateType = {
+  Geocoder: Function,
   direction1: string,
   direction2: string,
   description: string,
@@ -28,97 +40,94 @@ type StateType = {
   minutes: string,
 };
 
-class Form extends Component<PropsType, StateType> {
-  state = {
-    direction1: "",
-    direction2: "",
-    description: "",
-    kilometers: "0",
-    minutes: "0",
-  };
+class Form extends PureComponent<PropsType, StateType> {
+  state = { description: "" };
+
+  componentDidMount() {
+    const { firebase, setUserAction } = this.props;
+    firebase.getCurrentUser(user => {
+      if (user) {
+        setUserAction(user);
+      }
+    });
+  }
 
   onChange = (event: Object) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  onRequestService = () => {
+    const { firebase, service, user, resetStoreAction, showError } = this.props;
+    const { description } = this.state;
+    service.description = description;
+    firebase
+      .createService(service, user.uid)
+      .then(resp => {
+        console.log(resp);
+        resetStoreAction();
+      })
+      .catch(err => {
+        showError(err);
+      });
+  };
+
   render() {
-    const { classes } = this.props;
-    const {
-      direction1,
-      direction2,
-      description,
-      kilometers,
-      minutes,
-    } = this.state;
+    const { classes, showError, time, distance } = this.props;
+    const { description } = this.state;
+    const disabled = time !== "" && distance !== "" && description !== "";
     return (
       <main className={classes.main}>
         <CssBaseline />
-        <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="address">First address</InputLabel>
-          <Input
-            value={direction1}
-            onChange={this.onChange}
-            id="direction1"
-            name="direction1"
-            autoComplete="direction1"
-            autoFocus
-          />
-        </FormControl>
-        <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="address">Second address</InputLabel>
-          <Input
-            value={direction2}
-            onChange={this.onChange}
-            id="direction2"
-            name="direction2"
-            autoComplete="direction2"
-            autoFocus
-          />
-        </FormControl>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-        >
-          Calculate
-        </Button>
+        <TextInput
+          label="First Direction"
+          id="address1"
+          name="address1"
+          autocomplete="address1"
+          autofocus
+          showError={showError}
+        />
+        <TextInput
+          label="Second Direction"
+          id="address2"
+          name="address2"
+          autocomplete="address2"
+          showError={showError}
+        />
         <Grid className={classes.container} container direction="row">
           <Grid item xs={6} sm={6}>
-            <Typography
-              variant="h6"
-              color="inherit"
-              className={classes.grow}
-              align="center"
-            >
-              {kilometers}
-            </Typography>
             <Typography
               variant="subtitle2"
               color="inherit"
               className={classes.grow}
               align="center"
             >
-              Km
+              Distance:
+            </Typography>
+            <Typography
+              variant="h6"
+              color="inherit"
+              className={classes.grow}
+              align="center"
+            >
+              {distance}
             </Typography>
           </Grid>
           <Grid item xs={6} sm={6}>
             <Typography
-              variant="h6"
-              color="inherit"
-              className={classes.grow}
-              align="center"
-            >
-              {minutes}
-            </Typography>
-            <Typography
               variant="subtitle2"
               color="inherit"
               className={classes.grow}
               align="center"
             >
-              Minutes
+              Time:
+            </Typography>
+            <Typography
+              variant="h6"
+              color="inherit"
+              className={classes.grow}
+              align="center"
+            >
+              {time}
             </Typography>
           </Grid>
         </Grid>
@@ -126,7 +135,7 @@ class Form extends Component<PropsType, StateType> {
           fullWidth
           id="description"
           name="description"
-          label="Description"
+          label="Description*"
           multiline
           rows="5"
           value={description}
@@ -135,6 +144,8 @@ class Form extends Component<PropsType, StateType> {
           margin="normal"
         />
         <Button
+          onClick={this.onRequestService}
+          disabled={!disabled}
           type="submit"
           fullWidth
           variant="contained"
@@ -148,4 +159,24 @@ class Form extends Component<PropsType, StateType> {
   }
 }
 
-export default withStyles(styles)(Form);
+/* Connection to Store ========================= */
+
+function mapStateToProps(state) {
+  return {
+    distance: state.service.distance,
+    time: state.service.time,
+    service: state.service,
+  };
+}
+
+const mapDispatchToProps = dispatch => ({
+  setUserAction: user => dispatch(setUser(user)),
+  resetStoreAction: () => dispatch(resetStore()),
+});
+
+const FormView = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Form);
+
+export default withStyles(styles)(FormView);
