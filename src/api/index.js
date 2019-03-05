@@ -2,14 +2,7 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 
-const config = {
-  apiKey: "AIzaSyDCKpT4L6vpN5lnekkm-ugOmAqOut-ECjw",
-  authDomain: "services-demo-b4840.firebaseapp.com",
-  databaseURL: "https://services-demo-b4840.firebaseio.com",
-  projectId: "services-demo-b4840",
-  storageBucket: "services-demo-b4840.appspot.com",
-  messagingSenderId: "702990738562",
-};
+const config = {"<YOUR FIREBASE CONFIGURATION OBJECT>"};
 
 class Firebase {
   constructor() {
